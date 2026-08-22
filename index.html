@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🍦 シャトレーゼ アイス総選挙 2026 夏 🍨</title>
+  <title>🍦 購買アイス総選挙 2026 夏 🍨</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -163,8 +163,8 @@
 
 <header class="header">
   <div class="header-inner">
-    <h1>🍦 シャトレーゼ アイス総選挙 2026 夏 🍨</h1>
-    <p class="sub">お手頃で大人気！シャトレーゼの推しアイスに投票しよう！</p>
+    <h1>🍦 購買アイス総選挙 🍨</h1>
+    <p class="sub">トップ３に選ばれたらMiacisのアイスコーナーに並ぶよ！</p>
     <div class="stats-bar">
       <div class="stat"><span class="live-dot"></span>LIVE <span>候補</span><span class="n" id="sCand">0</span><span>品</span></div>
       <div class="stat">🗳️<span>総投票数</span><span class="n" id="sVotes">0</span><span>票</span></div>
@@ -204,8 +204,7 @@
     <!-- Official LINE campaign info -->
     <div class="point-box">
       <div class="point-box-title">🎁 イベントポイントGETのチャンス！</div>
-      <p>公式LINEに投票完了メッセージを送ると、自動応答で<strong>限定イベントポイント</strong>をプレゼント！</p>
-      <div>合言葉: <span class="point-code" id="pointCodeText">【アイス投票完了: チョコバッキー】</span></div>
+      <p>Miacis公式LINEに<strong>「投票したよ！」</strong>とメッセージくれればイベントポイントをプレゼント！</p>
     </div>
 
     <!-- Share Actions -->
@@ -431,17 +430,15 @@ function render() { renderPodium(); renderGrid(); updateStats(); }
 // ===== Modal & SNS Sharing =====
 function getSharePayload(productName) {
   const url = window.location.origin + window.location.pathname;
-  const keyword = `【アイス投票完了: ${productName}】`;
-  const text = `🍦 シャトレーゼ アイス総選挙 2026 夏 🍨\n私は「${productName}」に投票しました！\n\nあなたの推しアイスにも投票しよう👇\n${url}\n\n#シャトレーゼ #アイス総選挙 #アイス部`;
-  const lineText = `${keyword}\n\nシャトレーゼアイス総選挙で「${productName}」に投票しました！✨\n${url}`;
-  return { url, keyword, text, lineText };
+  const text = `🍦 購買アイス総選挙 🍨\n私は「${productName}」に投票しました！\nトップ3に選ばれたらMiacisのアイスコーナーに並ぶよ✨\n\nあなたも推しアイスに投票しよう👇\n${url}\n\n#Miacis #アイス総選挙 #購買部`;
+  const lineText = `投票したよ！\n\n購買アイス総選挙で「${productName}」に投票しました！✨\n${url}`;
+  return { url, text, lineText };
 }
 
 function showShareModal(productName) {
   const payload = getSharePayload(productName);
   
   document.getElementById('modalVotedItem').textContent = `「${productName}」に投票しました！`;
-  document.getElementById('pointCodeText').textContent = payload.keyword;
 
   // LINE share URL (URL scheme)
   const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(payload.lineText)}`;

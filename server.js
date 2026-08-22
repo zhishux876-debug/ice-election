@@ -77,21 +77,23 @@ function broadcastSSE(data) {
 
 // ===== API helpers =====
 function getVoteData() {
+  const actualVotersCount = Object.values(voters).filter(v => v.votedProducts && v.votedProducts.length > 0).length;
   return {
     votes,
-    totalVoters: Object.keys(voters).length,
+    totalVoters: actualVotersCount,
     totalVotes: Object.values(votes).reduce((a, b) => a + b, 0)
   };
 }
 
 function getResults() {
+  const actualVotersCount = Object.values(voters).filter(v => v.votedProducts && v.votedProducts.length > 0).length;
   const entries = Object.entries(votes)
     .map(([id, count]) => ({ id, votes: count }))
     .sort((a, b) => b.votes - a.votes);
   entries.forEach((e, i) => e.rank = i + 1);
   return {
     results: entries,
-    totalVoters: Object.keys(voters).length,
+    totalVoters: actualVotersCount,
     totalVotes: Object.values(votes).reduce((a, b) => a + b, 0)
   };
 }

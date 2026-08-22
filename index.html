@@ -241,9 +241,25 @@
       0%, 100% { transform: translateY(0) rotate(0deg); }
       50% { transform: translateY(-10px) rotate(1deg); }
     }
-    @keyframes pulseBtn {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
+    /* Splash Progress Bar */
+    .splash-progress-wrap {
+      width: clamp(180px, 40vw, 260px);
+      height: 6px;
+      background: rgba(255, 255, 255, 0.35);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+    .splash-progress-bar {
+      width: 0%;
+      height: 100%;
+      background: #ffffff;
+      border-radius: 10px;
+      animation: fillProgress 1.8s ease-in-out forwards;
+    }
+    @keyframes fillProgress {
+      0% { width: 0%; }
+      100% { width: 100%; }
     }
 
     /* Connection status */
@@ -254,12 +270,14 @@
 </head>
 <body>
 <!-- Opening Splash Screen -->
-<div class="splash-screen" id="splashScreen">
+<div class="splash-screen" id="splashScreen" onclick="enterSite()">
   <div class="splash-content">
     <img src="after6.png" alt="アフターシックス AFTER 6" class="splash-logo">
     <div class="splash-tagline">✨ Miacisでは毎日イベント実施中！ ✨</div>
     <div class="splash-subtext">放課後をもっと楽しく！中高生のためのユースセンター</div>
-    <button class="splash-btn" onclick="enterSite()">🍦 投票サイトへGO！ 🍨</button>
+    <div class="splash-progress-wrap">
+      <div class="splash-progress-bar"></div>
+    </div>
   </div>
 </div>
 
@@ -631,14 +649,20 @@ document.getElementById('navTabs').addEventListener('click', e => {
 // ===== Opening Splash Control =====
 function enterSite() {
   const splash = document.getElementById('splashScreen');
-  splash.classList.add('hide');
-  sessionStorage.setItem('hasSeenSplash', 'true');
+  if (splash && !splash.classList.contains('hide')) {
+    splash.classList.add('hide');
+    sessionStorage.setItem('hasSeenSplash', 'true');
+  }
 }
 
-// Check if splash has been seen in this session
+// Auto transition after 1.8s
 if (sessionStorage.getItem('hasSeenSplash') === 'true') {
   const splash = document.getElementById('splashScreen');
   if (splash) splash.classList.add('hide');
+} else {
+  setTimeout(() => {
+    enterSite();
+  }, 1800);
 }
 
 // ===== Init =====

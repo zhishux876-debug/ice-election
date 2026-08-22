@@ -32,12 +32,17 @@ GitHub経由で無料公開できます（HTTPS対応・ずっと公開可能）
 3. **設定を入力してデプロイ**
    - **Name**: `chateraise-ice-election`（好きな名前）
    - **Language**: `Node`
-   - **Build Command**: （空欄のままでOK）
+   - **Build Command**: `npm install`
    - **Start Command**: `node server.js`
    - **Instance Type**: `Free`
+   - **Environment Variables**:
+     - `SUPABASE_URL`: SupabaseのProject URL
+     - `SUPABASE_KEY`: Supabaseのanon public key
+     ※設定方法は [SUPABASE_SETUP.md](file:///Users/nishimuranaoki/Downloads/Miacis/ice-election/SUPABASE_SETUP.md) を参照
    - **「Deploy Web Service」** をクリック！
 
 数分で `https://chateraise-ice-election.onrender.com` のような専用公開URLが発行されます！🎉
+（Supabaseを設定することで、サーバーがスリープ・再起動してもデータが消えなくなります）
 
 ---
 

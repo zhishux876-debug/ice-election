@@ -419,10 +419,25 @@ let currentFilter = 'all';
 let eventSource = null;
 let lastVotedProductName = '';
 
+// ===== Voter ID Helper =====
+function getVoterId() {
+  let id = localStorage.getItem('voter_id');
+  if (!id) {
+    id = (typeof crypto !== 'undefined' && crypto.randomUUID)
+      ? crypto.randomUUID()
+      : 'v_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+    localStorage.setItem('voter_id', id);
+  }
+  return id;
+}
+
 // ===== API =====
 async function fetchVotes() {
   try {
-    const res = await fetch('/api/votes', { credentials: 'include' });
+    const res = await fetch('/api/votes', {
+      credentials: 'include',
+      headers: { 'x-voter-id': getVoterId() }
+    });
     const data = await res.json();
     votes = data.votes || {};
     myVotes = data.myVotes || [];
@@ -436,7 +451,10 @@ async function castVote(productId) {
   try {
     const res = await fetch('/api/vote', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-voter-id': getVoterId()
+      },
       credentials: 'include',
       body: JSON.stringify({ productId })
     });

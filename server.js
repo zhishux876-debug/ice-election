@@ -1,20 +1,73 @@
+require('dotenv').config();
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { createClient } = require('@supabase/supabase-js');
 
 const PORT = process.env.PORT || 3000;
 const DIR = __dirname;
 const VOTES_FILE = path.join(DIR, 'votes.json');
 const VOTERS_FILE = path.join(DIR, 'voters.json');
 
+// ===== Supabase Configuration =====
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+const supabase = (SUPABASE_URL && SUPABASE_KEY)
+  ? createClient(SUPABASE_URL, SUPABASE_KEY)
+  : null;
+
 // ===== In-memory state =====
 let votes = {};
 let voters = {};
 let sseClients = [];
 
-// ===== File I/O =====
-function loadData() {
+// ===== Data Loading =====
+async function loadData() {
+  if (supabase) {
+    try {
+      console.log('🔄 Supabaseから投票データを取得中...');
+      const { data, error } = await supabase
+        .from('ice_votes')
+        .select('voter_id, product_id');
+
+      if (error) {
+        console.error('⚠️ Supabaseデータ取得エラー:', error.message);
+        console.log('👉 SUPABASE_SETUP.md を確認してテーブル作成とRLSポリシーを設定してください。');
+        loadLocalData();
+        return;
+      }
+
+      votes = {};
+      voters = {};
+
+      if (data && data.length > 0) {
+        data.forEach(row => {
+          const { voter_id, product_id } = row;
+          votes[product_id] = (votes[product_id] || 0) + 1;
+          if (!voters[voter_id]) {
+            voters[voter_id] = { votedProducts: [] };
+          }
+          if (!voters[voter_id].votedProducts.includes(product_id)) {
+            voters[voter_id].votedProducts.push(product_id);
+          }
+        });
+      }
+      const actualVotersCount = Object.keys(voters).length;
+      const totalVoteCount = data ? data.length : 0;
+      console.log(`✅ Supabase同期完了: 累計 ${totalVoteCount} 票 / ${actualVotersCount} 名の投票者`);
+    } catch (err) {
+      console.error('Supabase接続エラー:', err);
+      loadLocalData();
+    }
+  } else {
+    console.log('ℹ️ SUPABASE_URL / SUPABASE_KEY が設定されていないため、ローカルJSONファイルを使用します。');
+    loadLocalData();
+  }
+}
+
+function loadLocalData() {
   try {
     if (fs.existsSync(VOTES_FILE)) {
       votes = JSON.parse(fs.readFileSync(VOTES_FILE, 'utf8'));
@@ -27,17 +80,23 @@ function loadData() {
   } catch { voters = {}; }
 }
 
-function saveVotes() {
-  fs.writeFileSync(VOTES_FILE, JSON.stringify(votes, null, 2), 'utf8');
+function saveLocalVotes() {
+  try {
+    fs.writeFileSync(VOTES_FILE, JSON.stringify(votes, null, 2), 'utf8');
+  } catch (e) {
+    console.error('ローカル votes.json 保存エラー:', e);
+  }
 }
 
-function saveVoters() {
-  fs.writeFileSync(VOTERS_FILE, JSON.stringify(voters, null, 2), 'utf8');
+function saveLocalVoters() {
+  try {
+    fs.writeFileSync(VOTERS_FILE, JSON.stringify(voters, null, 2), 'utf8');
+  } catch (e) {
+    console.error('ローカル voters.json 保存エラー:', e);
+  }
 }
 
-loadData();
-
-// ===== Cookie helpers =====
+// ===== Cookie & Voter ID helpers =====
 function parseCookies(req) {
   const cookies = {};
   const header = req.headers.cookie || '';
@@ -50,14 +109,16 @@ function parseCookies(req) {
 
 function getOrCreateVoterId(req, res) {
   const cookies = parseCookies(req);
-  let voterId = cookies['voter_id'];
+  let voterId = req.headers['x-voter-id'] || cookies['voter_id'];
   if (!voterId) {
     voterId = crypto.randomUUID();
-    res.setHeader('Set-Cookie', `voter_id=${voterId}; Path=/; Max-Age=31536000; SameSite=Lax`);
   }
+  // Cookieをセット（1年間有効）
+  res.setHeader('Set-Cookie', `voter_id=${voterId}; Path=/; Max-Age=31536000; SameSite=Lax`);
+
   if (!voters[voterId]) {
     voters[voterId] = { votedProducts: [], createdAt: new Date().toISOString() };
-    saveVoters();
+    if (!supabase) saveLocalVoters();
   }
   return voterId;
 }
@@ -128,7 +189,7 @@ const server = http.createServer(async (req, res) => {
   // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Voter-Id');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
 
   if (req.method === 'OPTIONS') {
@@ -159,21 +220,49 @@ const server = http.createServer(async (req, res) => {
         return res.end(JSON.stringify({ error: 'productId is required' }));
       }
 
-      // Check if already voted for this product
-      const voter = voters[voterId];
+      // Check if already voted for this product (in memory)
+      const voter = voters[voterId] || { votedProducts: [] };
       if (voter.votedProducts.includes(productId)) {
         res.writeHead(409, { 'Content-Type': 'application/json' });
         return res.end(JSON.stringify({ error: 'Already voted for this product' }));
       }
 
-      // Record vote
-      votes[productId] = (votes[productId] || 0) + 1;
-      voter.votedProducts.push(productId);
-      saveVotes();
-      saveVoters();
+      // Record vote in Supabase if configured
+      if (supabase) {
+        const { error } = await supabase
+          .from('ice_votes')
+          .insert([{ voter_id: voterId, product_id: productId }]);
+
+        if (error) {
+          // If unique constraint violation (duplicate vote)
+          if (error.code === '23505') {
+            res.writeHead(409, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ error: 'Already voted for this product' }));
+          }
+          console.error('Supabase insert error:', error.message);
+          // Fallback to local save
+          votes[productId] = (votes[productId] || 0) + 1;
+          voter.votedProducts.push(productId);
+          saveLocalVotes();
+          saveLocalVoters();
+        } else {
+          // Success in Supabase
+          votes[productId] = (votes[productId] || 0) + 1;
+          if (!voters[voterId]) {
+            voters[voterId] = { votedProducts: [] };
+          }
+          voters[voterId].votedProducts.push(productId);
+        }
+      } else {
+        // Local file storage
+        votes[productId] = (votes[productId] || 0) + 1;
+        voter.votedProducts.push(productId);
+        saveLocalVotes();
+        saveLocalVoters();
+      }
 
       const data = getVoteData();
-      data.myVotes = voter.votedProducts;
+      data.myVotes = voters[voterId]?.votedProducts || [];
 
       // Broadcast to SSE clients
       broadcastSSE({ type: 'vote', productId, votes: votes[productId], totalVotes: data.totalVotes, totalVoters: data.totalVoters });
@@ -229,8 +318,18 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, () => {
-  console.log(`🍦 アイス総選挙サーバー起動！ http://localhost:${PORT}`);
-  console.log(`   投票API:  http://localhost:${PORT}/api/votes`);
-  console.log(`   SSE配信:  http://localhost:${PORT}/api/stream`);
-});
+async function startServer() {
+  await loadData();
+  server.listen(PORT, () => {
+    console.log(`🍦 アイス総選挙サーバー起動！ http://localhost:${PORT}`);
+    if (supabase) {
+      console.log(`📡 Supabase連携モード: 有効 (${SUPABASE_URL})`);
+    } else {
+      console.log(`📁 ローカルファイル保存モード: 有効 (SUPABASE_URL未設定)`);
+    }
+    console.log(`   投票API:  http://localhost:${PORT}/api/votes`);
+    console.log(`   SSE配信:  http://localhost:${PORT}/api/stream`);
+  });
+}
+
+startServer();

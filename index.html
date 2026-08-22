@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🍦 シャトレーゼ アイス総選挙 2026 夏 🍨</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #FF6B9D;
+      --primary-dark: #E8527A;
+      --secondary: #4ECDC4;
+      --accent: #FFE66D;
+      --bg: #FFF5F7;
+      --card-bg: #FFFFFF;
+      --text: #2D3436;
+      --text-light: #636E72;
+      --gold: #FFD700;
+      --silver: #C0C0C0;
+      --bronze: #CD7F32;
+      --line-green: #06C755;
+      --x-black: #0F1419;
+      --insta-gradient: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);
+      --shadow: 0 4px 20px rgba(255,107,157,0.15);
+      --shadow-hover: 0 8px 30px rgba(255,107,157,0.25);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Zen Maru Gothic',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
+
+    /* Background */
+    .bg-deco { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; overflow:hidden; }
+    .bg-deco .fl { position:absolute; font-size:2rem; opacity:0.12; animation:flUp 18s infinite linear; }
+    @keyframes flUp { 0%{transform:translateY(100vh) rotate(0);opacity:0} 10%{opacity:0.12} 90%{opacity:0.12} 100%{transform:translateY(-10vh) rotate(360deg);opacity:0} }
+
+    /* Header */
+    .header { background:linear-gradient(135deg,#FF6B9D 0%,#FF8E72 30%,#FFB347 60%,#4ECDC4 100%); text-align:center; position:relative; overflow:hidden; }
+    .header::before { content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%; background:radial-gradient(circle,rgba(255,255,255,0.1) 0%,transparent 60%); animation:hShine 8s ease-in-out infinite; }
+    @keyframes hShine { 0%,100%{transform:translate(0,0)} 50%{transform:translate(20%,10%)} }
+    .header-inner { position:relative; z-index:1; padding:28px 20px 18px; }
+    .header h1 { font-size:clamp(1.7rem,5vw,2.8rem); font-weight:900; color:#fff; text-shadow:2px 2px 8px rgba(0,0,0,0.2); margin-bottom:6px; letter-spacing:.04em; }
+    .header .sub { font-size:clamp(.82rem,2.5vw,1.05rem); color:rgba(255,255,255,.9); font-weight:500; margin-bottom:14px; }
+    .stats-bar { display:flex; justify-content:center; gap:20px; flex-wrap:wrap; }
+    .stat { background:rgba(255,255,255,.2); backdrop-filter:blur(10px); border-radius:50px; padding:7px 18px; color:#fff; font-weight:700; font-size:.9rem; display:flex; align-items:center; gap:5px; }
+    .stat .n { font-size:1.25rem; font-weight:900; }
+    .live-dot { display:inline-block; width:8px; height:8px; background:#FF4444; border-radius:50%; margin-right:4px; animation:pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
+
+    /* Nav */
+    .nav { display:flex; justify-content:center; gap:8px; padding:12px 16px; background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.05); position:sticky; top:0; z-index:100; flex-wrap:wrap; }
+    .nav-btn { padding:7px 16px; border-radius:25px; border:2px solid var(--primary); background:transparent; color:var(--primary); font-family:inherit; font-weight:700; font-size:.82rem; cursor:pointer; transition:all .3s; }
+    .nav-btn.active,.nav-btn:hover { background:var(--primary); color:#fff; transform:translateY(-2px); box-shadow:0 4px 12px rgba(255,107,157,.3); }
+
+    /* Main */
+    .main { max-width:1200px; margin:0 auto; padding:20px; position:relative; z-index:1; }
+    .stitle { text-align:center; font-size:1.4rem; font-weight:900; color:var(--primary-dark); margin-bottom:18px; }
+
+    /* Podium */
+    .podium { display:flex; justify-content:center; align-items:flex-end; gap:14px; margin-bottom:28px; padding:0 10px; }
+    .pod-item { text-align:center; flex:1; max-width:240px; transition:transform .3s; }
+    .pod-item:hover { transform:translateY(-5px); }
+    .pod-card { background:#fff; border-radius:18px; padding:14px; box-shadow:var(--shadow); position:relative; overflow:hidden; }
+    .pod-item:nth-child(2) .pod-card { border:3px solid var(--gold); }
+    .pod-item:nth-child(1) .pod-card { border:3px solid var(--silver); }
+    .pod-item:nth-child(3) .pod-card { border:3px solid var(--bronze); }
+    .pod-rank { position:absolute; top:-5px; left:-5px; width:46px; height:46px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem; font-weight:900; color:#fff; z-index:2; }
+    .r1 { background:linear-gradient(135deg,#FFD700,#FFA500); box-shadow:0 3px 15px rgba(255,215,0,.4); }
+    .r2 { background:linear-gradient(135deg,#C0C0C0,#A0A0A0); box-shadow:0 3px 15px rgba(192,192,192,.4); }
+    .r3 { background:linear-gradient(135deg,#CD7F32,#A0522D); box-shadow:0 3px 15px rgba(205,127,50,.4); }
+    .pod-img { width:100%; aspect-ratio:1; object-fit:contain; border-radius:10px; background:#f8f8f8; margin-bottom:8px; }
+    .pod-name { font-size:.82rem; font-weight:700; margin-bottom:4px; line-height:1.3; min-height:2.4em; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    .pod-votes { font-size:1.4rem; font-weight:900; color:var(--primary); }
+    .pod-votes span { font-size:.75rem; font-weight:500; color:var(--text-light); }
+
+    /* Grid */
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; }
+    .card { background:var(--card-bg); border-radius:14px; overflow:hidden; box-shadow:var(--shadow); transition:all .3s; position:relative; display:flex; flex-direction:column; }
+    .card:hover { transform:translateY(-4px); box-shadow:var(--shadow-hover); }
+    .card.voted { border:3px solid var(--secondary); }
+    .card.hidden { display:none; }
+    .badge { position:absolute; top:8px; left:8px; background:var(--primary); color:#fff; font-weight:900; font-size:.8rem; padding:3px 10px; border-radius:18px; z-index:2; }
+    .badge.t3 { font-size:.9rem; padding:5px 12px; }
+    .cat-tag { position:absolute; top:8px; right:8px; background:rgba(78,205,196,.9); color:#fff; font-size:.65rem; font-weight:700; padding:2px 8px; border-radius:12px; z-index:2; }
+    .card-img-wrap { padding:16px; background:linear-gradient(135deg,#f8f9fa,#fff); display:flex; align-items:center; justify-content:center; min-height:170px; }
+    .card-img { width:100%; max-height:150px; object-fit:contain; transition:transform .3s; }
+    .card:hover .card-img { transform:scale(1.05); }
+    .card-info { padding:12px; flex:1; display:flex; flex-direction:column; }
+    .card-name { font-size:.88rem; font-weight:700; margin-bottom:4px; line-height:1.35; }
+    .variants { font-size:.72rem; color:var(--text-light); margin-bottom:10px; line-height:1.3; }
+    .vote-area { display:flex; align-items:center; gap:8px; margin-top:auto; }
+    .v-count { font-size:1.3rem; font-weight:900; color:var(--primary); min-width:50px; }
+    .v-count small { font-size:.65rem; font-weight:500; color:var(--text-light); }
+    .bar-wrap { flex:1; height:7px; background:#f0f0f0; border-radius:4px; overflow:hidden; }
+    .bar { height:100%; background:linear-gradient(90deg,var(--primary),var(--secondary)); border-radius:4px; transition:width .5s; }
+    .vote-btn { width:100%; padding:11px; border:none; border-radius:0 0 14px 14px; font-family:inherit; font-size:.95rem; font-weight:700; cursor:pointer; transition:all .3s; display:flex; align-items:center; justify-content:center; gap:5px; }
+    .vote-btn:not(.voted) { background:linear-gradient(135deg,var(--primary),var(--primary-dark)); color:#fff; }
+    .vote-btn:not(.voted):hover { background:linear-gradient(135deg,var(--primary-dark),#D4406A); box-shadow:0 4px 15px rgba(255,107,157,.4); }
+    .vote-btn:not(.voted):active { transform:scale(.97); }
+    .vote-btn.voted { background:var(--secondary); color:#fff; cursor:default; }
+    .vote-btn:disabled { opacity:.85; }
+
+    /* Modal (Share Modal) */
+    .modal-backdrop { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); z-index:10000; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .3s ease; padding:16px; }
+    .modal-backdrop.show { opacity:1; pointer-events:auto; }
+    .modal { background:#fff; border-radius:24px; max-width:440px; width:100%; padding:28px 24px; box-shadow:0 20px 60px rgba(0,0,0,0.25); text-align:center; transform:scale(0.9) translateY(20px); transition:all .3s cubic-bezier(0.34, 1.56, 0.64, 1); position:relative; }
+    .modal-backdrop.show .modal { transform:scale(1) translateY(0); }
+    .modal-close { position:absolute; top:14px; right:16px; background:none; border:none; font-size:1.5rem; color:#aaa; cursor:pointer; font-weight:700; line-height:1; }
+    .modal-close:hover { color:#333; }
+    .modal-em { font-size:3rem; margin-bottom:8px; }
+    .modal-title { font-size:1.3rem; font-weight:900; color:var(--primary-dark); margin-bottom:4px; }
+    .modal-sub { font-size:.9rem; color:var(--text); font-weight:700; margin-bottom:14px; }
+
+    /* Point Banner */
+    .point-box { background:linear-gradient(135deg, #FFF9E6, #FFF0F5); border:2px dashed #FFB347; border-radius:14px; padding:12px 14px; margin-bottom:18px; text-align:left; font-size:.82rem; }
+    .point-box-title { font-weight:900; color:#E67E22; display:flex; align-items:center; gap:6px; margin-bottom:4px; font-size:.88rem; }
+    .point-box p { color:#555; line-height:1.4; }
+    .point-code { background:#fff; border:1px solid #FFE0B2; border-radius:6px; padding:3px 8px; font-weight:900; color:var(--primary-dark); display:inline-block; margin-top:4px; }
+
+    /* Share Buttons */
+    .share-btns { display:flex; flex-direction:column; gap:10px; }
+    .share-btn { display:flex; align-items:center; justify-content:center; gap:10px; width:100%; padding:12px; border-radius:12px; font-family:inherit; font-size:.92rem; font-weight:900; border:none; cursor:pointer; color:#fff; text-decoration:none; transition:transform .2s, box-shadow .2s; }
+    .share-btn:hover { transform:translateY(-2px); box-shadow:0 6px 15px rgba(0,0,0,0.15); }
+    .share-btn:active { transform:scale(0.98); }
+    .btn-line { background:var(--line-green); }
+    .btn-x { background:var(--x-black); }
+    .btn-insta { background:var(--insta-gradient); }
+    .btn-copy { background:#4A90E2; }
+    .share-icon { width:22px; height:22px; fill:currentColor; }
+
+    /* Confetti */
+    .conf-wrap { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9999; }
+    .conf { position:absolute; width:10px; height:10px; animation:cFall 1.5s ease-out forwards; }
+    @keyframes cFall { 0%{transform:translateY(0) rotate(0) scale(1);opacity:1} 100%{transform:translateY(100vh) rotate(720deg) scale(0);opacity:0} }
+
+    /* Footer */
+    .footer { text-align:center; padding:28px 20px; color:var(--text-light); font-size:.78rem; background:#fff; margin-top:36px; }
+    .footer a { color:var(--primary); text-decoration:none; }
+
+    @media(max-width:768px) {
+      .podium { flex-direction:column; align-items:center; }
+      .pod-item { max-width:280px; width:100%; }
+      .pod-item:nth-child(2) { order:-1; }
+      .grid { grid-template-columns:repeat(auto-fill,minmax(155px,1fr)); gap:10px; }
+      .card-img-wrap { min-height:120px; padding:12px; }
+      .card-img { max-height:110px; }
+      .card-name { font-size:.78rem; }
+      .stat { padding:5px 12px; font-size:.78rem; }
+      .stat .n { font-size:1rem; }
+    }
+
+    .fade-in { opacity:0; transform:translateY(18px); transition:opacity .4s,transform .4s; }
+    .fade-in.vis { opacity:1; transform:translateY(0); }
+
+    /* Connection status */
+    .conn-status { position:fixed; bottom:16px; right:16px; padding:6px 14px; border-radius:20px; font-size:.75rem; font-weight:700; z-index:200; }
+    .conn-status.ok { background:#d4edda; color:#155724; }
+    .conn-status.err { background:#f8d7da; color:#721c24; }
+  </style>
+</head>
+<body>
+<div class="bg-deco" id="bgDeco"></div>
+
+<header class="header">
+  <div class="header-inner">
+    <h1>🍦 シャトレーゼ アイス総選挙 2026 夏 🍨</h1>
+    <p class="sub">お手頃で大人気！シャトレーゼの推しアイスに投票しよう！</p>
+    <div class="stats-bar">
+      <div class="stat"><span class="live-dot"></span>LIVE <span>候補</span><span class="n" id="sCand">0</span><span>品</span></div>
+      <div class="stat">🗳️<span>総投票数</span><span class="n" id="sVotes">0</span><span>票</span></div>
+      <div class="stat">👥<span>投票者数</span><span class="n" id="sVoters">0</span><span>人</span></div>
+    </div>
+  </div>
+</header>
+
+<nav class="nav" id="navTabs">
+  <button class="nav-btn active" data-f="all">🍧 すべて</button>
+  <button class="nav-btn" data-f="アイスバー">🍡 アイスバー</button>
+  <button class="nav-btn" data-f="アイスカップ">🍨 アイスカップ</button>
+  <button class="nav-btn" data-f="アイスモナカ">🥮 モナカ</button>
+  <button class="nav-btn" data-f="アイスコーン">🍦 コーン</button>
+  <button class="nav-btn" data-f="シューアイス、その他">🧁 シュー・その他</button>
+</nav>
+
+<main class="main">
+  <section>
+    <h2 class="stitle">👑 現在のトップ3 👑</h2>
+    <div class="podium" id="podium"></div>
+  </section>
+  <section>
+    <h2 class="stitle">🗳️ 投票する 🗳️</h2>
+    <div class="grid" id="grid"></div>
+  </section>
+</main>
+
+<!-- Share Modal -->
+<div class="modal-backdrop" id="shareModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div class="modal-em">🎉</div>
+    <h3 class="modal-title">投票完了しました！</h3>
+    <p class="modal-sub" id="modalVotedItem">「チョコバッキー」に投票しました！</p>
+    
+    <!-- Official LINE campaign info -->
+    <div class="point-box">
+      <div class="point-box-title">🎁 イベントポイントGETのチャンス！</div>
+      <p>公式LINEに投票完了メッセージを送ると、自動応答で<strong>限定イベントポイント</strong>をプレゼント！</p>
+      <div>合言葉: <span class="point-code" id="pointCodeText">【アイス投票完了: チョコバッキー】</span></div>
+    </div>
+
+    <!-- Share Actions -->
+    <div class="share-btns">
+      <a class="share-btn btn-line" id="btnShareLine" target="_blank">
+        <svg class="share-icon" viewBox="0 0 24 24"><path d="M24 10.304c0-5.369-5.383-9.738-12-9.738-6.616 0-12 4.369-12 9.738 0 4.814 4.269 8.846 10.036 9.608.391.084.922.258 1.057.592.121.303.079.778.039 1.085l-.171 1.027c-.053.303-.242 1.186 1.039.647 1.281-.54 6.911-4.069 9.428-6.967 1.739-1.907 2.572-3.843 2.572-5.992z"/></svg>
+        LINEで共有＆ポイント獲得
+      </a>
+      <a class="share-btn btn-x" id="btnShareX" target="_blank">
+        <svg class="share-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        X (Twitter) で推しをシェア
+      </a>
+      <button class="share-btn btn-insta" onclick="shareInstagram()">
+        <svg class="share-icon" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        Instagram 用テキストをコピー
+      </button>
+      <button class="share-btn btn-copy" onclick="copyShareText()">
+        📋 投票メッセージをコピー
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="conf-wrap" id="confWrap"></div>
+<div class="conn-status ok" id="connStatus">🟢 リアルタイム接続中</div>
+
+<footer class="footer">
+  <p>※ これはファンメイドの投票企画です。シャトレーゼ公式とは関係ありません。</p>
+  <p style="margin-top:4px">商品画像・情報の出典: <a href="https://www.chateraise.co.jp/ec/c/cice/" target="_blank">シャトレーゼ公式サイト</a></p>
+  <p style="margin-top:8px">🍦 みんなで選ぶ、今年の夏の推しアイス！ 🍦</p>
+</footer>
+
+<script>
+// ===== 1個あたり100円以下の商品データ (味違い統合済み・全43品・価格非表示) =====
+const PRODUCTS = [
+  {id:"1002216",name:"チョコバッキー",image:"https://www.chateraise.co.jp/img/goods/eccb/0228173729_5a966a49b2732.jpg",category:"アイスバー",variants:["バニラ","完熟バナナ","チョコ","ドライミント"]},
+  {id:"2266002",name:"和菓子アイス 玉露と抹茶",image:"https://www.chateraise.co.jp/img/goods/S/2266002.jpg",category:"アイスバー",variants:[]},
+  {id:"2266001",name:"クッキー＆クランチバー",image:"https://www.chateraise.co.jp/img/goods/S/2266001.jpg",category:"アイスバー",variants:["チョコミント","バニラ"]},
+  {id:"2265981",name:"アイスキャンディー",image:"https://www.chateraise.co.jp/img/goods/S/2265981.jpg",category:"アイスバー",variants:["いちごオ・レ","ソーダ"]},
+  {id:"2265927",name:"和菓子アイス 北海道十勝あずき",image:"https://www.chateraise.co.jp/img/goods/S/2265927.jpg",category:"アイスバー",variants:[]},
+  {id:"2264480",name:"チョコバッキー・ザ・プレミアム",image:"https://www.chateraise.co.jp/img/goods/S/2264480.jpg",category:"アイスバー",variants:["香るタヒチバニラ","アフォガート"]},
+  {id:"2265345",name:"練乳ミルクバー",image:"https://www.chateraise.co.jp/img/goods/S/2265345.jpg",category:"アイスバー",variants:[]},
+  {id:"2265656",name:"チョコバッキー カジゴン",image:"https://www.chateraise.co.jp/img/goods/S/2265656.jpg",category:"アイスバー",variants:[]},
+  {id:"1003277",name:"大人のチョコバッキー 焦がしバターキャラメル",image:"https://www.chateraise.co.jp/img/goods/S/1003277.jpg",category:"アイスバー",variants:[]},
+  {id:"2265114",name:"梅・ザ・スーパー",image:"https://www.chateraise.co.jp/img/goods/S/2265114.jpg",category:"アイスバー",variants:[]},
+  {id:"2265184",name:"やわらか氷バー",image:"https://www.chateraise.co.jp/img/goods/S/2265184.jpg",category:"アイスバー",variants:["クラフトコーラ","あまおう苺","山梨県産白桃"]},
+  {id:"999821",name:"白州名水かき氷バー 練乳いちご",image:"https://www.chateraise.co.jp/img/goods/S/999821.jpg",category:"アイスバー",variants:[]},
+  {id:"2265745",name:"果実食感バー",image:"https://www.chateraise.co.jp/img/goods/S/2265745.jpg",category:"アイスバー",variants:["ライチ","アルフォンソマンゴー","白桃"]},
+  {id:"2265925",name:"深煎り珈琲ゼリー入りカフェラテバー",image:"https://www.chateraise.co.jp/img/goods/S/2265925.jpg",category:"アイスバー",variants:[]},
+  {id:"2265909",name:"八ヶ岳南牧村契約牧場 しぼりたて牛乳バー",image:"https://www.chateraise.co.jp/img/goods/S/2265909.jpg",category:"アイスバー",variants:["宇治抹茶","苺","珈琲","ミルク"]},
+  {id:"2265897",name:"ナタデココ入り マンゴーラッシーバー",image:"https://www.chateraise.co.jp/img/goods/S/2265897.jpg",category:"アイスバー",variants:[]},
+  {id:"2265451",name:"カヌレアイスバー",image:"https://www.chateraise.co.jp/img/goods/S/2265451.jpg",category:"アイスバー",variants:[]},
+  {id:"2263456",name:"まるかじりバー クリームチーズ",image:"https://www.chateraise.co.jp/img/goods/S/2263456.jpg",category:"アイスバー",variants:[]},
+  {id:"1006014",name:"チョコミントバー",image:"https://www.chateraise.co.jp/img/goods/S/1006014.jpg",category:"アイスバー",variants:[]},
+  {id:"1001877",name:"つぶつぶ果実バー",image:"https://www.chateraise.co.jp/img/goods/S/1001877.jpg",category:"アイスバー",variants:["温州みかん","瀬戸内産レモン"]},
+  {id:"1006091",name:"レモン・ザ・スーパー",image:"https://www.chateraise.co.jp/img/goods/S/1006091.jpg",category:"アイスバー",variants:[]},
+  {id:"2265079",name:"チョコバナナバー",image:"https://www.chateraise.co.jp/img/goods/S/2265079.jpg",category:"アイスバー",variants:[]},
+  {id:"2264870",name:"アサイーボウル風アイスバー",image:"https://www.chateraise.co.jp/img/goods/S/2264870.jpg",category:"アイスバー",variants:[]},
+  {id:"1006012",name:"ラムレーズンバー",image:"https://www.chateraise.co.jp/img/goods/S/1006012.jpg",category:"アイスバー",variants:[]},
+  {id:"1006093",name:"ナタデココ入り 杏仁豆腐バー",image:"https://www.chateraise.co.jp/img/goods/S/1006093.jpg",category:"アイスバー",variants:[]},
+  {id:"2263318",name:"しぼりたて牛乳のミニミルクバー",image:"https://www.chateraise.co.jp/img/goods/S/2263318.jpg",category:"アイスバー",variants:[]},
+  {id:"186147",name:"ラムネアイスバー",image:"https://www.chateraise.co.jp/img/goods/S/186147.jpg",category:"アイスバー",variants:[]},
+  {id:"2265746",name:"ピュルテ",image:"https://www.chateraise.co.jp/img/goods/S/2265746.jpg",category:"アイスバー",variants:["ミックスベリー","とちおとめ苺","マダガスカルバニラ"]},
+  {id:"2264716",name:"糖質75%カットのアイス チョコバニラバー",image:"https://www.chateraise.co.jp/img/goods/S/2264716.jpg",category:"アイスバー",variants:[]},
+  {id:"176147",name:"シュガーコーン",image:"https://www.chateraise.co.jp/img/goods/eccb/0809113659_5d4cdc4bb7e4c.jpg",category:"アイスコーン",variants:["バニラ","チョコ"]},
+  {id:"999759",name:"ミニソフト",image:"https://www.chateraise.co.jp/img/goods/S/999759.jpg",category:"アイスコーン",variants:["バニラ","チョコ"]},
+  {id:"999817",name:"白州名水かき氷",image:"https://www.chateraise.co.jp/img/goods/S/999817.jpg",category:"アイスカップ",variants:[]},
+  {id:"2265784",name:"白州名水かき氷フロート",image:"https://www.chateraise.co.jp/img/goods/S/2265784.jpg",category:"アイスカップ",variants:["マンゴー＆バニラ","コーヒー＆バニラ","ソーダ＆バニラ"]},
+  {id:"1000462",name:"和菓子アイス 黒みつきなこ",image:"https://www.chateraise.co.jp/img/goods/S/1000462.jpg",category:"アイスカップ",variants:[]},
+  {id:"2263289",name:"しぼりたて牛乳のミニミルクカップ",image:"https://www.chateraise.co.jp/img/goods/S/2263289.jpg",category:"アイスカップ",variants:[]},
+  {id:"2263435",name:"八ヶ岳南牧村契約牧場 しぼりたて牛乳アイス 1500ml",image:"https://www.chateraise.co.jp/img/goods/S/2263435.jpg",category:"アイスカップ",variants:[]},
+  {id:"1002016",name:"乳と卵と小麦粉を使用していないおいしいアイス",image:"https://www.chateraise.co.jp/img/goods/S/1002016.jpg",category:"アイスカップ",variants:[]},
+  {id:"2265146",name:"八ヶ岳南牧村契約牧場 しぼりたて牛乳モナカ",image:"https://www.chateraise.co.jp/img/goods/S/2265146.jpg",category:"アイスモナカ",variants:[]},
+  {id:"2265160",name:"アイスモナカ",image:"https://www.chateraise.co.jp/img/goods/S/2265160.jpg",category:"アイスモナカ",variants:["バニラ","バニラ＆コーヒー"]},
+  {id:"1006051",name:"和菓子アイス たい焼き最中バニラ しっぽまであん",image:"https://www.chateraise.co.jp/img/goods/eccb/0118093916_5c41203474ea7.jpg",category:"アイスモナカ",variants:[]},
+  {id:"2265257",name:"デザートショコラボール",image:"https://www.chateraise.co.jp/img/goods/S/2265257.jpg",category:"シューアイス、その他",variants:["マロングラッセ","チョコミント","ノワールショコラ","バニラ"]},
+  {id:"2265161",name:"ふっくらシューアイス",image:"https://www.chateraise.co.jp/img/goods/S/2265161.jpg",category:"シューアイス、その他",variants:["ミルクチョコ","バニラ"]},
+  {id:"260293",name:"ボンボン",image:"https://www.chateraise.co.jp/img/goods/S/260293.jpg",category:"シューアイス、その他",variants:[]},
+];
+
+// ===== State =====
+let votes = {};
+let myVotes = [];
+let totalVoters = 0;
+let totalVotes = 0;
+let currentFilter = 'all';
+let eventSource = null;
+let lastVotedProductName = '';
+
+// ===== API =====
+async function fetchVotes() {
+  try {
+    const res = await fetch('/api/votes', { credentials: 'include' });
+    const data = await res.json();
+    votes = data.votes || {};
+    myVotes = data.myVotes || [];
+    totalVoters = data.totalVoters || 0;
+    totalVotes = data.totalVotes || 0;
+    render();
+  } catch(e) { console.error('Failed to fetch votes:', e); }
+}
+
+async function castVote(productId) {
+  try {
+    const res = await fetch('/api/vote', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ productId })
+    });
+    if (res.status === 409) {
+      alert('この商品にはすでに投票済みです！');
+      return;
+    }
+    if (!res.ok) throw new Error('Vote failed');
+    const data = await res.json();
+    votes = data.votes || {};
+    myVotes = data.myVotes || [];
+    totalVoters = data.totalVoters || 0;
+    totalVotes = data.totalVotes || 0;
+
+    const p = PRODUCTS.find(x => x.id === productId);
+    lastVotedProductName = p?.name || '推しアイス';
+    showShareModal(lastVotedProductName);
+    showConfetti();
+    render();
+  } catch(e) { console.error('Vote error:', e); alert('投票に失敗しました。もう一度お試しください。'); }
+}
+
+// ===== SSE =====
+function connectSSE() {
+  if (eventSource) eventSource.close();
+  eventSource = new EventSource('/api/stream');
+  eventSource.onmessage = (e) => {
+    try {
+      const data = JSON.parse(e.data);
+      if (data.type === 'vote') {
+        votes[data.productId] = data.votes;
+        totalVotes = data.totalVotes;
+        totalVoters = data.totalVoters;
+        render();
+      } else if (data.type === 'connected') {
+        votes = data.votes || {};
+        totalVoters = data.totalVoters || 0;
+        totalVotes = data.totalVotes || 0;
+      }
+    } catch {}
+  };
+  eventSource.onopen = () => {
+    document.getElementById('connStatus').className = 'conn-status ok';
+    document.getElementById('connStatus').textContent = '🟢 リアルタイム接続中';
+  };
+  eventSource.onerror = () => {
+    document.getElementById('connStatus').className = 'conn-status err';
+    document.getElementById('connStatus').textContent = '🔴 再接続中...';
+    setTimeout(connectSSE, 3000);
+  };
+}
+
+// ===== Rendering =====
+function getSorted() {
+  return PRODUCTS.map(p => ({ ...p, v: votes[p.id] || 0 })).sort((a,b) => b.v - a.v);
+}
+
+function renderPodium() {
+  const s = getSorted();
+  const t = s.slice(0,3);
+  const order = [t[1], t[0], t[2]];
+  const labels = ['🥈','👑','🥉'];
+  const cls = ['r2','r1','r3'];
+  document.getElementById('podium').innerHTML = order.map((p,i) => {
+    if(!p) return '';
+    return `<div class="pod-item"><div class="pod-card">
+      <div class="pod-rank ${cls[i]}">${labels[i]}</div>
+      <img class="pod-img" src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%2250%%22 x=%2250%%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 font-size=%2240%22>🍦</text></svg>'">
+      <div class="pod-name">${p.name}</div>
+      <div class="pod-votes">${p.v}<span> 票</span></div>
+    </div></div>`;
+  }).join('');
+}
+
+function renderGrid() {
+  const s = getSorted();
+  const mx = s[0]?.v || 1;
+  document.getElementById('grid').innerHTML = s.map((p,i) => {
+    const r = i+1;
+    const voted = myVotes.includes(p.id);
+    const bw = (p.v/mx)*100;
+    const show = currentFilter==='all' || p.category===currentFilter;
+    const vt = p.variants?.length ? `<div class="variants">味: ${p.variants.join(', ')}</div>` : '';
+    return `<div class="card fade-in ${voted?'voted':''} ${show?'':'hidden'}" data-cat="${p.category}">
+      <span class="badge ${r<=3?'t3':''}">${r}位</span>
+      <span class="cat-tag">${p.category}</span>
+      <div class="card-img-wrap">
+        <img class="card-img" src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%2250%%22 x=%2250%%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 font-size=%2240%22>🍦</text></svg>'">
+      </div>
+      <div class="card-info">
+        <div class="card-name">${p.name}</div>
+        ${vt}
+        <div class="vote-area">
+          <div class="v-count">${p.v}<small> 票</small></div>
+          <div class="bar-wrap"><div class="bar" style="width:${bw}%"></div></div>
+        </div>
+      </div>
+      <button class="vote-btn ${voted?'voted':''}" onclick="castVote('${p.id}')" ${voted?'disabled':''}>
+        ${voted?'✅ 投票済み':'🗳️ 投票する！'}
+      </button>
+    </div>`;
+  }).join('');
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.fade-in').forEach((el,i) => setTimeout(()=>el.classList.add('vis'), i*20));
+  });
+}
+
+function updateStats() {
+  document.getElementById('sCand').textContent = PRODUCTS.length;
+  document.getElementById('sVotes').textContent = totalVotes.toLocaleString();
+  document.getElementById('sVoters').textContent = totalVoters.toLocaleString();
+}
+
+function render() { renderPodium(); renderGrid(); updateStats(); }
+
+// ===== Modal & SNS Sharing =====
+function getSharePayload(productName) {
+  const url = window.location.origin + window.location.pathname;
+  const keyword = `【アイス投票完了: ${productName}】`;
+  const text = `🍦 シャトレーゼ アイス総選挙 2026 夏 🍨\n私は「${productName}」に投票しました！\n\nあなたの推しアイスにも投票しよう👇\n${url}\n\n#シャトレーゼ #アイス総選挙 #アイス部`;
+  const lineText = `${keyword}\n\nシャトレーゼアイス総選挙で「${productName}」に投票しました！✨\n${url}`;
+  return { url, keyword, text, lineText };
+}
+
+function showShareModal(productName) {
+  const payload = getSharePayload(productName);
+  
+  document.getElementById('modalVotedItem').textContent = `「${productName}」に投票しました！`;
+  document.getElementById('pointCodeText').textContent = payload.keyword;
+
+  // LINE share URL (URL scheme)
+  const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(payload.lineText)}`;
+  document.getElementById('btnShareLine').href = lineUrl;
+
+  // X (Twitter) share URL
+  const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(payload.text)}`;
+  document.getElementById('btnShareX').href = xUrl;
+
+  document.getElementById('shareModal').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('shareModal').classList.remove('show');
+}
+
+// Close when clicking backdrop
+document.getElementById('shareModal').addEventListener('click', (e) => {
+  if (e.target.id === 'shareModal') closeModal();
+});
+
+async function copyShareText() {
+  const payload = getSharePayload(lastVotedProductName);
+  try {
+    await navigator.clipboard.writeText(payload.text);
+    alert('📋 シェア用テキストをコピーしました！SNSに貼り付けて投稿してください。');
+  } catch {
+    alert('テキストのコピーに失敗しました。');
+  }
+}
+
+async function shareInstagram() {
+  const payload = getSharePayload(lastVotedProductName);
+  try {
+    await navigator.clipboard.writeText(payload.text);
+    alert('📸 Instagram投稿用のテキストをコピーしました！\nInstagramを開いてストーリーズやフィードに貼り付けてシェアしてください✨');
+  } catch {
+    alert('テキストのコピーに失敗しました。');
+  }
+}
+
+// ===== Effects =====
+function showConfetti() {
+  const w = document.getElementById('confWrap');
+  const colors = ['#FF6B9D','#4ECDC4','#FFE66D','#FF8E72','#A78BFA','#34D399'];
+  const emo = ['🍦','🍨','🍧','🎉','⭐','❤️'];
+  for(let i=0;i<25;i++){
+    const el = document.createElement('div');
+    el.className='conf';
+    el.style.left=Math.random()*100+'%';
+    el.style.top='-20px';
+    el.style.animationDelay=Math.random()*.5+'s';
+    el.style.animationDuration=(1+Math.random())+'s';
+    if(Math.random()>.5){el.textContent=emo[Math.floor(Math.random()*emo.length)];el.style.fontSize=(14+Math.random()*14)+'px';}
+    else{el.style.background=colors[Math.floor(Math.random()*colors.length)];el.style.borderRadius=Math.random()>.5?'50%':'0';el.style.width=(5+Math.random()*10)+'px';el.style.height=(5+Math.random()*10)+'px';}
+    w.appendChild(el);
+    setTimeout(()=>el.remove(),2000);
+  }
+}
+
+function bgEmojis() {
+  const c = document.getElementById('bgDeco');
+  const em = ['🍦','🍨','🍧','🧁','🍰','⭐','❄️'];
+  setInterval(()=>{
+    const el=document.createElement('div');el.className='fl';
+    el.textContent=em[Math.floor(Math.random()*em.length)];
+    el.style.left=Math.random()*100+'%';
+    el.style.animationDuration=(12+Math.random()*10)+'s';
+    el.style.fontSize=(1+Math.random()*1.5)+'rem';
+    c.appendChild(el);setTimeout(()=>el.remove(),22000);
+  },3500);
+}
+
+// ===== Nav =====
+document.getElementById('navTabs').addEventListener('click', e => {
+  if (!e.target.classList.contains('nav-btn')) return;
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  e.target.classList.add('active');
+  currentFilter = e.target.dataset.f;
+  renderGrid();
+});
+
+// ===== Init =====
+fetchVotes().then(() => {
+  connectSSE();
+  bgEmojis();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "ded20ae8-a55c-4ec0-9d0d-79fc9b74f3e4": {
+    "votedProducts": [],
+    "createdAt": "2026-08-22T00:36:41.030Z"
+  },
+  "4953206b-5459-4b76-bed9-eca209121ed9": {
+    "votedProducts": [],
+    "createdAt": "2026-08-22T00:36:43.963Z"
+  },
+  "ba8588e8-5eb6-46a8-8ec8-f5c7ced41e03": {
+    "votedProducts": [
+      "2266002",
+      "1002216"
+    ],
+    "createdAt": "2026-08-22T00:48:11.761Z"
+  }
+}

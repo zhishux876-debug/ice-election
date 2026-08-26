@@ -44,6 +44,15 @@ GitHub経由で無料公開できます（HTTPS対応・ずっと公開可能）
 数分で `https://chateraise-ice-election.onrender.com` のような専用公開URLが発行されます！🎉
 （Supabaseを設定することで、サーバーがスリープ・再起動してもデータが消えなくなります）
 
+#### 😴 スリープ対策（keep-alive）
+
+Render無料プランは **約15分アクセスが無いと自動スリープ** し、次のアクセス時に起動へ30秒〜1分かかります。
+このアプリはサーバー自身が10分ごとに `/healthz` へpingを送る keep-alive を内蔵しており、Render上では自動で有効になります（Renderが設定する `RENDER_EXTERNAL_URL` を利用。環境変数の追加は不要）。
+
+- ローカル実行時は自動で無効になります
+- Render以外のホスティングで使う場合は、環境変数 `KEEP_ALIVE_URL` に公開URLを設定してください
+- 万一に備えた保険として [UptimeRobot](https://uptimerobot.com/)（無料）で `https://<あなたのURL>/healthz` を5分間隔で監視するのもおすすめです
+
 ---
 
 ### 方法 2: Glitch（GitHub不要・ブラウザだけで即公開）

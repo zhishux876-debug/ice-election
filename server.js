@@ -23,6 +23,28 @@ let votes = {};
 let voters = {};
 let sseClients = [];
 
+// ===== Keep-alive(Render無料プランのスリープ対策)=====
+// Render無料プランは約15分アクセスが無いとスリープするため、
+// 10分ごとに自分自身へHTTPリクエストを送ってスリープを防ぐ。
+// RENDER_EXTERNAL_URL はRenderが自動で設定する環境変数。
+const KEEP_ALIVE_URL = process.env.KEEP_ALIVE_URL || process.env.RENDER_EXTERNAL_URL;
+const KEEP_ALIVE_INTERVAL_MS = 10 * 60 * 1000;
+
+function startKeepAlive() {
+  if (!KEEP_ALIVE_URL) {
+    console.log('ℹ️ KEEP_ALIVE_URL / RENDER_EXTERNAL_URL 未設定のため keep-alive は無効(ローカル実行時は不要)');
+    return;
+  }
+  setInterval(async () => {
+    try {
+      await fetch(`${KEEP_ALIVE_URL}/healthz`);
+    } catch (e) {
+      console.error('⚠️ keep-alive ping 失敗:', e.message);
+    }
+  }, KEEP_ALIVE_INTERVAL_MS);
+  console.log(`⏰ keep-alive 有効: ${KEEP_ALIVE_URL}/healthz に10分ごとにping`);
+}
+
 // ===== Data Loading =====
 async function loadData() {
   if (supabase) {
@@ -201,6 +223,12 @@ const server = http.createServer(async (req, res) => {
   const pathname = url.pathname;
 
   try {
+    // --- Health check (keep-alive ping先) ---
+    if (pathname === '/healthz') {
+      res.writeHead(200, { 'Content-Type': 'text/plain' });
+      return res.end('ok');
+    }
+
     // --- API Routes ---
     if (pathname === '/api/votes' && req.method === 'GET') {
       const voterId = getOrCreateVoterId(req, res);
@@ -329,7 +357,16 @@ async function startServer() {
     }
     console.log(`   投票API:  http://localhost:${PORT}/api/votes`);
     console.log(`   SSE配信:  http://localhost:${PORT}/api/stream`);
+    startKeepAlive();
   });
 }
+
+// 想定外のエラーでプロセスごと落ちるのを防ぐ
+process.on('uncaughtException', err => {
+  console.error('⚠️ uncaughtException:', err);
+});
+process.on('unhandledRejection', reason => {
+  console.error('⚠️ unhandledRejection:', reason);
+});
 
 startServer();
